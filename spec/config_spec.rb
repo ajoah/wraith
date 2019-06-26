@@ -17,6 +17,26 @@ describe "wraith config" do
       expect(wraith.config).to include "directory" => "shots"
     end
 
+    it 'returns default values for threads' do
+      expect(wraith.threads).to eq 8
+    end
+     it 'returns default values for settle' do
+      expect(wraith.settle).to eq 10
+    end
+
+    context 'non-standard config values' do
+      let(:config) { YAML.load "browser: phantomjs\nthreads: 2\nsettle: 5"}
+      let(:non_standard_wraith)  { Wraith::Wraith.new( config, { yaml_passed: true }) }
+
+      it 'returns overridden value when threads is specified in config' do
+        expect(non_standard_wraith.threads).to eq 2
+      end
+
+      it 'returns overridden value when settle is specified in config' do
+        expect(non_standard_wraith.settle).to eq 5
+      end
+    end
+
     it "should be able to import other configs" do
       config_name = get_path_relative_to __FILE__, "./configs/test_config--imports.yaml"
       wraith = Wraith::Wraith.new(config_name)
